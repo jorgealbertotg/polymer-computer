@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="computer-cv">
+  <template>
+    <style>
+      :host {
+        display: block;
+        border: 2px solid red;
+      }
+
+      section {
+        display: block;
+        margin: 20px;
+      }
+      paper-card {
+        --paper-card: {
+          width: 100%;
+        };
+        --paper-card-header: {
+          background-color: #b3c7ff;
+        };
+        --paper-card-header-color: #fff;
+      }
+    </style>
+
+    <article>
+      <section>
+        <paper-card heading="Presentación">
+          <div class="card-content">
+            <slot name="presentation"></slot>
+          </div>
+        </paper-card>
+      </section>
+      <section>
+        <paper-card heading="Formación académica">
+          <div class="card-content">
+            <dom-repeat items="{{academic}}">
+              <template>
+                <div>
+                  <p><strong>Escuela: </strong> <span>[[item.name]]</span></p>
+                  <p><strong>Grado: </strong> <span>[[item.degree]]</span></p>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </paper-card>
+      </section>
+      <section>
+        <paper-card heading="Proyectos">
+          <div class="card-content">
+            <dom-repeat items="{{projects}}">
+              <template>
+                <div>
+                  <p><strong>Proyecto: </strong> <span>[[item.name]]</span></p>
+                  <p><strong>Descripción: </strong> <span>[[item.desc]]</span></p>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </paper-card>
+      </section>
+      <section>
+        <paper-card heading="Skills">
+          <div class="card-content">
+            <dom-repeat items="{{skills}}">
+              <template>
+                <div>    
+                  <p><strong>Skill: </strong> <span>[[item.name]]</span></p>
+                  <p><strong>Dominio: </strong> <span>[[item.level]]</span></p>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </paper-card>
+      </section>
+      <section>
+        <paper-card heading="Información adicional">
+          <div class="card-content">
+            <dom-repeat items="{{skills}}">
+              <template>
+                <div>    
+                  <slot name="additional"></slot>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </paper-card>
+      </section>
+    </article>
+  </template>
+
+  <script>
+    class ComputerCV extends Polymer.Element {
+      static get is() { return 'computer-cv'; }
+      static get properties() {
+        return {
+          projects: Array,
+          skills: Array,
+          academic: Array
+        };
+      }
+    }
+    window.customElements.define(ComputerCV.is, ComputerCV);
+  </script>
+</dom-module>

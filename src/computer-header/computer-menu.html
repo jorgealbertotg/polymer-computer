@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="computer-menu">
+  <template>
+    <style>
+      :host {
+        border: 1px solid red;
+      }
+    </style>
+    <div>
+      <a href="/on" on-click="_handleClick">
+        <paper-icon-button icon="icons:power-settings-new"></paper-icon-button>
+      </a>
+      <dom-if if="{{started}}">
+        <template>
+          <a href="/on/cv">
+            <paper-icon-button icon="icons:description"></paper-icon-button>
+          </a>
+          <a href="/on/play">
+            <paper-icon-button icon="av:play-circle-filled"></paper-icon-button>
+          </a>
+        </template>
+      </dom-if>
+    </div>
+  </template>
+
+  <script>
+    class ComputerMenu extends Polymer.Element {
+      static get is() { return 'computer-menu'; }
+      static get properties() {
+        return {
+          started: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      _handleClick() {
+        this.started = !this.started;
+        this.dispatchEvent();
+      }
+    }
+
+    window.customElements.define(ComputerMenu.is, ComputerMenu);
+  </script>
+</dom-module>

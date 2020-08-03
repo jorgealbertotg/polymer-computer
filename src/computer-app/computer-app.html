@@ -1,0 +1,78 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<link rel="import" href="../computer-header/computer-header.html">
+<link rel="import" href="../computer-monitor/computer-monitor.html">
+
+<dom-module id="computer-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        min-width: 380px;
+        min-height: 100vh;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      :host > div {
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      iron-pages {
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+    </style>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}" 
+      pattern="/:page" 
+      data="{{data}}" 
+      tail="{{tail}}"></app-route>
+    <computer-header on-computer-header-power="_handlePower" started="{{started}}"></computer-header>
+    <div>
+      <iron-pages selected="{{data.page}}" attr-for-selected="name" fallback-selection="404">
+        
+        <p name="404">Not found :(</p>
+        <computer-monitor name="on" state="{{state}}" started="{{started}}" on-computer-monitor-started="_handleStarted"></computer-monitor>
+        
+      </iron-pages>
+    </div>
+  </template>
+
+  <script>
+    class ComputerApp extends Polymer.Element {
+      static get is() { return 'computer-app'; }
+      static get properties() {
+        return {
+          route: String,
+          data: Object,
+          tail: Object,
+          state: Boolean,
+          started: Boolean
+        };
+      }
+
+      _handlePower(e) {
+        this.state = e.detail.state;
+        this.started = false;
+        console.log(this.state);
+      }
+
+      _handleStarted(e) {
+        this.started = e.detail.started;
+        console.log(this.started);
+      }
+    }
+
+    window.customElements.define(ComputerApp.is, ComputerApp);
+  </script>
+</dom-module>

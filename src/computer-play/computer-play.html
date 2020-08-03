@@ -1,0 +1,272 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+
+<dom-module id="computer-play">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow:row nowrap;
+        justify-content: center;
+        flex-grow: 1;
+        padding: 50px 0;
+      }
+      :host > div {
+      }
+      :host div.history {
+        margin-left: 50px;
+      }
+      div.history button {
+        background-color: skyblue;
+        color: blue;
+        border: 1px solid blue;
+        margin-left: 10px;
+      }
+      div.history button:disabled {
+        color: #fff;
+        border-color: #eee;
+      }
+      div.history h3 {
+        margin: 0;
+        border-bottom: 1px solid #111;
+        min-width: 200px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+      }
+      h3 paper-icon-button {
+        justify-self: right;
+      }
+      :host > div.game {
+        align-self: start;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        grid-gap: 5px;
+        background-color: red;
+        font-size: 30px;
+      }
+      :host > div.game :after {
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+      }
+      :host > div.game div {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        justify-items: center;
+        justify-content: center;
+      }
+
+      div.game div p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100px;
+        min-width: 100px;
+        margin: 0;
+      }
+
+      div[mobile] {
+        display: none;
+      }
+      :host > div.game div:not(.winner) {
+        background-color: #fff;
+      }
+      .winner {
+        font-size: 50px;
+        background-color:gold
+      }
+    </style>
+    <paper-dialog id="modal" modal>
+      <p>Felicidades! Ha ganado el jugador <strong>{{mark}}</strong></p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Aceptar</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="modalask" modal>
+      <p>Juego terminado, no hubo ganador</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Aceptar</paper-button>
+      </div>
+    </paper-dialog>
+
+    <iron-media-query query="(max-width: 576px)" query-matches="{{mobile}}"></iron-media-query>
+    <div class="game">
+      <dom-repeat items="{{game}}" as="otro" index-as="count">
+        <template>
+          <div id="element{{count}}">
+            <p on-click="_handleClick" data-index$="[[count]]">{{otro}}</p>
+          </div>
+        </template>
+      </dom-repeat>
+    </div>
+    <div mobile$="{{mobile}}" class="history">
+      <h3>
+        Historial
+        <paper-icon-button on-click="_handleRestartHistory" icon="icons:autorenew"></paper-icon-button>
+      </h3>
+      <dom-repeat items="{{history}}">
+        <template>
+          <p>
+            <strong>{{index}}.</strong> Movimiento: {{item}} 
+            <button on-click="_handleHistory" data-index$="{{index}}" disabled$="{{!finished}}">
+              Ver
+            </button>
+          </p>
+        </template>
+      </dom-repeat>
+    </div>
+  </template>
+
+  <script>
+    class ComputerPlay extends Polymer.Element {
+      static get is() { return 'computer-play'; }
+      static get properties() {
+        return {
+          game: {
+            type: Array,
+            value: new Array(9).fill('')
+          },
+          finished: {
+            type: Boolean,
+            value: false
+          },
+          mark: {
+            type: String,
+            value: 'X'
+          },
+          history: {
+            type: Array,
+            value: []
+          },
+          state: {
+            type: Array,
+            value: []
+          },
+          winnerRoute: Array
+        };
+      }
+
+      static get observers() {
+        return [
+          '_historyChanges(history.splices)'
+        ];
+      }
+
+      _historyChanges() {
+        console.log(this.finished, new Date().getSeconds());
+        if (this.history.length === 9 && !this.finished) {
+          this.$.modalask.open();
+        }
+      }
+
+      _getPanels() {
+        return [...new Array(9)].fill('k');
+      }
+
+      _getMark() {
+        return this.mark === 'X' ? 'O' : 'X';
+      }
+
+      _handleRestartHistory() {
+        this.set('game', new Array(9));
+        this.set('history', []);
+        this.set('state', []);
+        this.finished = false;
+        this._removeClassToWinnerRoute();
+        this.winnerRoute = [];
+      }
+
+      _handleClick(e) {
+        const index = e.target.getAttribute('data-index');
+        if (!this.finished && !this.game[index]) {
+          const mark = this._getMark();
+          this.mark = mark;
+
+          this.set(`game.${index}`, mark);
+          this.push('state', [...this.game]);
+
+          if (this._getGameResult()) {
+            this.finished = true;
+            this._addClassToWinnerRoute();
+            console.log(this.finished);
+            this.$.modal.open();
+          }
+          
+          this.push('history', mark);
+        }
+      }
+
+      _addClassToWinnerRoute() {
+        this.winnerRoute.forEach((element) => {
+          const node = Polymer.dom(this.root).querySelector(`#element${element}`);
+          Polymer.dom(node).setAttribute('class', 'winner');
+        });
+      }
+
+      _removeClassToWinnerRoute() {
+        this.winnerRoute.forEach((element) => {
+          const node = Polymer.dom(this.root).querySelector(`#element${element}`);
+          Polymer.dom(node).removeAttribute('class');
+        });
+      }
+
+      _getGameResult() {
+        if (this.game[0] && (this.game[0] === this.game[1]) && (this.game[1] === this.game[2])) {
+          this.set('winnerRoute', [0, 1, 2]);
+          return true;
+        }
+        else if (this.game[3] && (this.game[3] === this.game[4]) && (this.game[4] === this.game[5])) {
+          this.set('winnerRoute', [3, 4, 5]);
+          return true;
+        }
+        else if (this.game[6] && (this.game[6] === this.game[7]) && (this.game[7] === this.game[8])) {
+          this.set('winnerRoute', [6, 7, 8]);
+          return true;
+        }
+        else if (this.game[0] && (this.game[0] === this.game[3]) && (this.game[3] === this.game[6])) {
+          this.set('winnerRoute', [0, 3, 6]);
+          return true;
+        }
+        else if (this.game[1] && (this.game[1] === this.game[4]) && (this.game[4] === this.game[7])) {
+          this.set('winnerRoute', [1, 4, 7]);
+          return true;
+        }
+        else if (this.game[2] && (this.game[2] === this.game[5]) && (this.game[5] === this.game[8])) {
+          this.set('winnerRoute', [2, 5, 8]);
+          return true;
+        }
+        else if (this.game[0] && (this.game[0] === this.game[4]) && (this.game[4] === this.game[8])) {
+          this.set('winnerRoute', [0, 4, 8]);
+          return true;
+        }
+        else if (this.game[2] && (this.game[2] === this.game[4]) && (this.game[4] === this.game[6])) {
+          this.set('winnerRoute', [2, 4, 6]);
+          return true;
+        }
+        else {
+          this.set('winnerRoute', []);
+          return false;
+        }
+      }
+
+      _handleHistory(e) {
+        const index = e.target.getAttribute('data-index');
+        this.set('game', this.state[index]);
+        this._removeClassToWinnerRoute();
+        this._getGameResult();
+        this._addClassToWinnerRoute();
+      }
+    }
+
+    window.customElements.define(ComputerPlay.is, ComputerPlay);
+  </script>
+</dom-module>

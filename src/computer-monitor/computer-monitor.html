@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../computer-cv/computer-cv.html">
+<link rel="import" href="../computer-play/computer-play.html">
+
+<dom-module id="computer-monitor">
+  <template>
+    <style>
+      :host {
+        display: block;
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+
+      div {
+        flex-grow: 1;
+      }
+
+      div.off {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        background-color: #111;
+        color: #fff;
+      }
+
+      div.on {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: center;
+        align-items: stretch;
+        align-content: stretch;
+      }
+
+      a {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #eee;
+        margin: 5px;
+        border-radius: 10px;
+      }
+
+      a:hover {
+        background-color: #f2f7fd;
+        border: 1px solid #b7d4ff;
+      }
+
+      paper-icon-button {
+        --paper-icon-button: {
+          width: 70px;
+          height: 70px;
+          color: #0D47A1;
+        }
+      }
+
+    </style>
+    <iron-media-query query="(max-width: 576px)" query-matches="{{mobile}}"></iron-media-query>
+    <iron-media-query query="(min-width: 577px) and (max-width: 768px)" query-matches="{{tablet}}"></iron-media-query>
+    <iron-media-query query="(min-width: 769px)" query-matches="{{desktop}}"></iron-media-query>
+    
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}" 
+      pattern="/on/:page" 
+      data="{{data}}" 
+      tail="{{tail}}"></app-route>
+
+    <dom-if if="{{status}}">
+      <template>
+        <div class="on">
+          <a href="/on/cv" on-click="_handleClick"><paper-icon-button icon="icons:description" class="paper-icon-responsive"></paper-icon-button></a>
+          <a href="/on/play" on-click="_handleClick"><paper-icon-button icon="av:play-circle-filled" class="paper-icon-responsive"></paper-icon-button></a>
+        </div>
+      </template>
+    </dom-if>
+    <dom-if if="{{started}}">
+      <template>
+        <div>
+          <iron-pages selected="{{data.page}}" attr-for-selected="name" fallback-selection="404">
+            
+            <p name="404">Not found :(</p>
+            <computer-cv name="cv" 
+              projects='[{"name": "Project1", "desc": "Description 1"}, {"name": "Project2", "desc": "Description 2"}, {"name": "Project3", "desc": "Description 3"}]'
+              skills='[{"name": "JavaScript", "level": "Nivel 1"}, {"name": "CSS", "level": "Nivel 2"}, {"name": "HTML", "level": "Nivel 3"}]'
+              academic='[{"name": "UPVM", "degree": "Ingenieria"}, {"name": "ESCOM", "degree": "Ingenieria"}, {"name": "Preparatoria", "degree": "Técnico"}]'>
+              <p slot="presentation">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magni veniam, facere officia vitae nobis consequatur quae enim consequuntur ducimus quis amet impedit dignissimos unde aliquam accusantium laudantium quibusdam at architecto.</p>
+              <p slot="additional">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magni veniam, facere officia vitae nobis consequatur quae enim consequuntur ducimus quis amet impedit dignissimos unde aliquam accusantium laudantium quibusdam at architecto.</p>
+            </computer-cv>
+            
+            <computer-play name="play"></computer-play>
+            
+          </iron-pages>
+        </div>
+      </template>
+    </dom-if>
+    <dom-if if="{{!state}}">
+      <template>
+        <div class="off">
+          <p>Apagado</p>
+        </div>
+      </template>
+    </dom-if>
+  </template>
+
+  <script>
+    class ComputerMonitor extends Polymer.Element {
+      static get is() { return 'computer-monitor'; }
+      static get properties() {
+        return {
+          route: String,
+          data: Object,
+          tail: Object,
+          mobile: Boolean,
+          tablet: Boolean,
+          desktop: Boolean,
+          state: {
+            type: Boolean,
+            value: false
+          },
+          started: {
+            type: Boolean,
+            value: false
+          },
+          status: {
+            type: Boolean,
+            computed: '_checkStatus(state, started)'
+          }
+        };
+      }
+      
+      _checkStatus(state, started) {
+        return state && !started;
+      }
+
+      _handleClick() {
+        this.started = true;
+        this.dispatchEvent(new CustomEvent(`${ComputerMonitor.is}-started`, {
+          bubbles: true,
+          composed: true,
+          detail: {started: this.started}
+        }));
+      }
+    }
+
+    window.customElements.define(ComputerMonitor.is, ComputerMonitor);
+  </script>
+</dom-module>

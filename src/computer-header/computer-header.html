@@ -1,0 +1,194 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<link rel="import" href="../computer-header/computer-menu.html">
+
+<dom-module id="computer-header">
+  <template>
+    <style>
+      :host {
+        display: block;
+        z-index: 10;
+      }
+      app-header {
+        color: #fff;
+        height: var(--app-header-height);
+        --app-header-background-rear-layer: {
+          background-color: #0D47A1;
+        };
+        --app-header-background-front-layer: {
+          background-color: #2962FF;
+        };
+      }
+      app-toolbar:nth-child(1) > div {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      app-toolbar:nth-child(1) > div div.title {
+        display: flex;
+        align-items: center;
+      }
+
+      app-toolbar:nth-child(1) > div div.menu {
+        text-align: right;
+      }
+
+      app-toolbar:nth-child(2) h2 {
+        text-align: center;
+      }
+
+      app-toolbar:nth-child(1) {
+        height: 50px;
+        display: block;
+      }
+      app-toolbar:nth-child(2) {
+        height: 150px;
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      app-toolbar:nth-child(3) {
+        text-align: center;
+        height: 70px;
+        justify-content: center;
+      }
+
+      app-header[mobile] {
+        height: 180px;
+      }
+      app-header[tablet] {
+        height: 200px;
+      }
+      app-header[desktop] {
+        height: 250px;
+      }
+
+      app-header[mobile] .app-responsive {
+        --app-toolbar-font-size: 40px;
+        --paper-icon-button: {
+          width: 70px;
+          height: 70px;
+        };
+      }
+
+      app-header[tablet] .app-responsive {
+        --app-toolbar-font-size: 50px;
+        --paper-icon-button: {
+          width: 80px;
+          height: 80px;
+        };
+      }
+      app-header[desktop] .app-responsive {
+        --app-toolbar-font-size: 60px;
+        --paper-icon-button: {
+          width: 100px;
+          height: 100px;
+        };
+      }
+      paper-icon-button {
+        --paper-icon-button: {
+          width: var(--paper-icon-size);
+          height: var(--paper-icon-size);
+        }
+      }
+
+      paper-icon-button {
+        color: #E3F2FD;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+    </style>
+    <iron-media-query query="(max-width: 576px)" query-matches="{{mobile}}"></iron-media-query>
+    <iron-media-query query="(min-width: 577px) and (max-width: 768px)" query-matches="{{tablet}}"></iron-media-query>
+    <iron-media-query query="(min-width: 769px)" query-matches="{{desktop}}"></iron-media-query>
+
+    <app-header-layout>
+      <app-header condenses fixed slot="header" effects="blend-background resize-title" mobile$="{{mobile}}" tablet$="{{tablet}}" desktop$="{{desktop}}" desktop-full$="{{desktop-full}}">
+        <app-toolbar condensed-title>
+          <div>
+            <div class="title">
+              <dom-if if="{{mobile}}">
+                <template>
+                  <paper-icon-button icon="icons:menu"></paper-icon-button>
+                </template>
+              </dom-if>
+              <span>Computadora</span>
+            </div>
+            <dom-if if="{{!mobile}}">
+              <template>
+                <div class="menu">
+                  <a href="/on" on-click="_handleClick">
+                    <paper-icon-button icon="icons:power-settings-new"></paper-icon-button>
+                  </a>
+                  <dom-if if="{{started}}">
+                    <template>      
+                      <a href="/on/cv"><paper-icon-button icon="icons:description"></paper-icon-button></a>
+                      <a href="/on/play"><paper-icon-button icon="av:play-circle-filled"></paper-icon-button></a>
+                    </template>
+                  </dom-if>
+                </div>
+              </template>
+            </dom-if>
+          </div>
+        </app-toolbar>
+        <app-toolbar main-title class="app-responsive">
+          <div>Bienvenido</div>
+          <div>
+            <a href="/on" on-click="_handleClick">
+              <paper-icon-button icon="icons:power-settings-new" class="paper-icon-responsive"></paper-icon-button>
+            </a>
+            <dom-if if="{{started}}">
+              <template>
+                <a href="/on/cv">
+                  <paper-icon-button icon="icons:description" class="paper-icon-responsive app-responsive"></paper-icon-button>
+                </a>
+                <a href="/on/play">
+                  <paper-icon-button icon="av:play-circle-filled" class="paper-icon-responsive app-responsive"></paper-icon-button>
+                </a>
+              </template>
+            </dom-if>
+          </div>
+          <!-- <computer-menu></computer-menu> -->
+        </app-toolbar>
+      </app-header>
+    </app-header-layout>
+  </template>
+
+  <script>
+    class ComputerHeader extends Polymer.Element {
+      static get is() { return 'computer-header'; }
+      static get properties() {
+        return {
+          mobile: Boolean,
+          tablet: Boolean,
+          desktop: Boolean,
+          started: Boolean,
+          state: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      _handleClick() {
+        this.state = !this.state;
+        this.dispatchEvent(new CustomEvent(`${ComputerHeader.is}-power`, {
+          bubbles: true,
+          composed: true,
+          detail: {state: this.state}
+        }));
+      }
+    }
+
+    window.customElements.define(ComputerHeader.is, ComputerHeader);
+  </script>
+</dom-module>

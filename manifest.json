@@ -1,0 +1,7 @@
+{
+  "name": "computer",
+  "short_name": "computer",
+  "description": "A test Polymer application",
+  "start_url": "/",
+  "display": "standalone"
+}

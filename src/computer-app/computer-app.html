@@ -9,13 +9,13 @@
 
 <link rel="import" href="../computer-header/computer-header.html">
 <link rel="import" href="../computer-monitor/computer-monitor.html">
+<link rel="import" href="../computer-color-selector/computer-color-selector.html">
 
 <dom-module id="computer-app">
   <template>
     <style>
       :host {
         display: block;
-        min-width: 380px;
         min-height: 100vh;
         display: flex;
         flex-flow: column nowrap;
@@ -30,6 +30,67 @@
         display: flex;
         flex-flow: column nowrap;
       }
+      .purple {
+        /* Computer Header */
+        --computer-header-background-rear-layer: #e03ce0;
+        --computer-header-background-front-layer: plum;
+        --computer-header-color: #573a57;
+        --computer-header-icon-color: #573a57;
+
+        /* Computer Monitor */
+        --computer-monitor-screen-background-color: #573a57;
+        --computer-monitor-screen-color: #fff;
+        --computer-monitor-anchor-border-color: #8b648b;
+        --computer-monitor-anchor-background-color-hover: #e6c8e6;
+        --computer-monitor-anchor-border-color-hover: purple;
+        --computer-monitor-icon-color: #573a57;
+
+        /* Computer CV */
+        --computer-cv-info-header-background-color: #e03ce0;
+        --computer-cv-info-header-color: #fff;
+        --computer-cv-list-header-background-color: #e03ce0;
+        --computer-cv-list-header-color: #fff;
+
+        /* Computer Game */
+        --computer-play-button-background-color: rgb(196, 0, 196);
+        --computer-play-game-background-color: plum;
+        --computer-play-button-color: #fff;
+        --computer-play-button-border-color: purple;
+        --computer-play-button-color-disabled: #fff;
+        --computer-play-button-border-color-disabled: #000;
+        --computer-play-winner-background-color: rgb(216, 190, 216);
+      }
+
+      .tomato {
+        /* Computer Header */
+        --computer-header-background-rear-layer: #DD2C00;
+        --computer-header-background-front-layer: tomato;
+        --computer-header-color: #fff;
+        --computer-header-icon-color: #fff;
+
+        /* Computer Monitor */
+        --computer-monitor-screen-background-color: #111;
+        --computer-monitor-screen-color: #fff;
+        --computer-monitor-anchor-border-color: #42A5F5;
+        --computer-monitor-anchor-background-color-hover: #E3F2FD;
+        --computer-monitor-anchor-border-color-hover: #0D47A1;
+        --computer-monitor-icon-color: #2196F3;
+
+        /* Computer CV */
+        --computer-cv-info-header-background-color: #2196F3;
+        --computer-cv-info-header-color: #fff;
+        --computer-cv-list-header-background-color: #2196F3;
+        --computer-cv-list-header-color: #fff;
+
+        /* Computer Game */
+        --computer-play-button-background-color: #F50057;
+        --computer-play-game-background-color: #EC407A;
+        --computer-play-button-color: #fff;
+        --computer-play-button-border-color: #C51162;
+        --computer-play-button-color-disabled: #fff;
+        --computer-play-button-border-color-disabled: #eee;
+        --computer-play-winner-background-color: #FCE4EC;
+      }
     </style>
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -37,8 +98,8 @@
       pattern="/:page" 
       data="{{data}}" 
       tail="{{tail}}"></app-route>
-    <computer-header on-computer-header-power="_handlePower" started="{{started}}"></computer-header>
-    <div>
+    <div class$="{{color}}">
+      <computer-header on-computer-header-power="_handlePower" started="{{started}}"></computer-header>
       <iron-pages selected="{{data.page}}" attr-for-selected="name" fallback-selection="404">
         
         <p name="404">Not found :(</p>
@@ -46,6 +107,8 @@
         
       </iron-pages>
     </div>
+    
+    <computer-color-selector on-computer-color-selector-color="_handleColor" id="selector"></computer-color-selector>
   </template>
 
   <script>
@@ -57,19 +120,25 @@
           data: Object,
           tail: Object,
           state: Boolean,
-          started: Boolean
+          started: Boolean,
+          color: {
+            type: String,
+            value: 'default'
+          }
         };
+      }
+
+      _handleColor(e) {
+        this.color = e.detail.color;
       }
 
       _handlePower(e) {
         this.state = e.detail.state;
         this.started = false;
-        console.log(this.state);
       }
 
       _handleStarted(e) {
         this.started = e.detail.started;
-        console.log(this.started);
       }
     }
 

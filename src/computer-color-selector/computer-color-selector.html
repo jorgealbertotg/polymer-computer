@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../mixin/Hiden.html">
+
+<dom-module id="computer-color-selector">
+  <template>
+    <style>
+      :host {
+        background-color: #fff;
+        border: 5px solid #eee;
+        display: block;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+      }
+      p {
+        padding: 0;
+        margin: 0;
+        text-align: center;
+      }
+      div {
+        padding: 10px;
+      }
+    </style>
+    <div>
+      <p on-click="toggle">
+        <dom-if if="{{hidden}}">
+          <template>
+            <paper-icon-button icon="icons:arrow-back"></paper-icon-button>
+          </template>
+        </dom-if>
+        <dom-if if="{{!hidden}}">
+          <template>
+            <paper-icon-button icon="icons:arrow-forward"></paper-icon-button>
+            Selecciona el color
+          </template>
+        </dom-if>
+      </p>
+      <p id="container">
+        <select value="{{color::input}}">
+          <option value="default">Default</option>
+          <option value="purple">Purple</option>
+          <option value="tomato">Tomato</option>
+        </select>
+      </p>
+    </div>
+  </template>
+  <script>
+    class ComputerColorSelector extends Hiden(Polymer.Element) {
+      static get is() { return 'computer-color-selector'; }
+      static get properties() {
+        return {
+          color: {
+            type: String,
+            value: 'default',
+            observer: '_colorChange'
+          }
+        };
+      }
+
+      _colorChange(color) {
+        this.dispatchEvent(new CustomEvent('computer-color-selector-color', {
+          bubbles: true,
+          composed: true,
+          detail: {color: color}
+        }));
+      }
+    }
+
+    window.customElements.define(ComputerColorSelector.is, ComputerColorSelector);
+  </script>
+</dom-module>

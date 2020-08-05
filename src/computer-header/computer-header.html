@@ -17,13 +17,13 @@
         z-index: 10;
       }
       app-header {
-        color: #fff;
+        color: var(--computer-header-color, #fff);
         height: var(--app-header-height);
         --app-header-background-rear-layer: {
-          background-color: #0D47A1;
+          background-color: var(--computer-header-background-rear-layer, #0D47A1);
         };
         --app-header-background-front-layer: {
-          background-color: #2962FF;
+          background-color: var(--computer-header-background-front-layer, #2962FF);
         };
       }
       app-toolbar:nth-child(1) > div {
@@ -99,7 +99,7 @@
       }
 
       paper-icon-button {
-        color: #E3F2FD;
+        color: var(--computer-header-icon-color, #E3F2FD);
       }
 
       a {

@@ -26,8 +26,8 @@
         flex-flow: column nowrap;
         justify-content: center;
         align-items: center;
-        background-color: #111;
-        color: #fff;
+        background-color: var(--computer-monitor-screen-background-color, #111);
+        color: var(--computer-monitor-screen-color, #fff);
       }
 
       div.on {
@@ -43,21 +43,21 @@
         flex-flow: column nowrap;
         justify-content: center;
         align-items: center;
-        border: 1px solid #eee;
+        border: 1px solid var(--computer-monitor-anchor-border-color, #eee);
         margin: 5px;
         border-radius: 10px;
       }
 
       a:hover {
-        background-color: #f2f7fd;
-        border: 1px solid #b7d4ff;
+        background-color: var(--computer-monitor-anchor-background-color-hover, #f2f7fd);
+        border: 1px solid var(--computer-monitor-anchor-border-color-hover, #b7d4ff);
       }
 
       paper-icon-button {
         --paper-icon-button: {
           width: 70px;
           height: 70px;
-          color: #0D47A1;
+          color: var(--computer-monitor-icon-color, #0D47A1);
         }
       }
 
@@ -88,9 +88,9 @@
             
             <p name="404">Not found :(</p>
             <computer-cv name="cv" 
-              projects='[{"name": "Project1", "desc": "Description 1"}, {"name": "Project2", "desc": "Description 2"}, {"name": "Project3", "desc": "Description 3"}]'
-              skills='[{"name": "JavaScript", "level": "Nivel 1"}, {"name": "CSS", "level": "Nivel 2"}, {"name": "HTML", "level": "Nivel 3"}]'
-              academic='[{"name": "UPVM", "degree": "Ingenieria"}, {"name": "ESCOM", "degree": "Ingenieria"}, {"name": "Preparatoria", "degree": "Técnico"}]'>
+              projects='[{"Nombre del proyecto": "Project1", "Descripción": "Description 1"}, {"Nombre del proyecto": "Project2", "Descripción": "Description 2"}, {"Nombre del proyecto": "Project3", "Descripción": "Description 3"}]'
+              skills='[{"Skill": "JavaScript", "Dominio": "Nivel 1"}, {"Skill": "CSS", "Dominio": "Nivel 2"}, {"Skill": "HTML", "Dominio": "Nivel 3"}]'
+              academic='[{"Escuela": "UPVM", "Grado": "Ingenieria"}, {"Escuela": "ESCOM", "Grado": "Ingenieria"}, {"Escuela": "Preparatoria", "Grado": "Técnico"}]'>
               <p slot="presentation">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magni veniam, facere officia vitae nobis consequatur quae enim consequuntur ducimus quis amet impedit dignissimos unde aliquam accusantium laudantium quibusdam at architecto.</p>
               <p slot="additional">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magni veniam, facere officia vitae nobis consequatur quae enim consequuntur ducimus quis amet impedit dignissimos unde aliquam accusantium laudantium quibusdam at architecto.</p>
             </computer-cv>

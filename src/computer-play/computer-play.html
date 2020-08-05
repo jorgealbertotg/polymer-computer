@@ -4,6 +4,10 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../mixin/Hiden.html">
 
 <dom-module id="computer-play">
   <template>
@@ -15,20 +19,18 @@
         flex-grow: 1;
         padding: 50px 0;
       }
-      :host > div {
-      }
       :host div.history {
         margin-left: 50px;
       }
       div.history button {
-        background-color: skyblue;
-        color: blue;
-        border: 1px solid blue;
+        background-color: var(--computer-play-button-background-color, skyblue);
+        color: var(--computer-play-button-color, blue);
+        border: 1px solid var(--computer-play-button-border-color, blue);
         margin-left: 10px;
       }
       div.history button:disabled {
-        color: #fff;
-        border-color: #eee;
+        color: var(--computer-play-button-color-disabled, #fff);
+        border-color: var(--computer-play-button-border-color-disabled, #eee);
       }
       div.history h3 {
         margin: 0;
@@ -47,7 +49,7 @@
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
         grid-gap: 5px;
-        background-color: red;
+        background-color: var(--computer-play-game-background-color, red);
         font-size: 30px;
       }
       :host > div.game :after {
@@ -81,7 +83,7 @@
       }
       .winner {
         font-size: 50px;
-        background-color:gold
+        background-color:var(--computer-play-winner-background-color, gold);
       }
     </style>
     <paper-dialog id="modal" modal>
@@ -110,24 +112,38 @@
     </div>
     <div mobile$="{{mobile}}" class="history">
       <h3>
-        Historial
+        <span on-click="toggle">
+          <dom-if if="{{!hidden}}">
+            <template>
+              <paper-icon-button icon="icons:arrow-downward"></paper-icon-button>
+            </template>
+          </dom-if>
+          <dom-if if="{{hidden}}">
+            <template>
+              <paper-icon-button icon="icons:arrow-upward"></paper-icon-button>
+            </template>
+          </dom-if>
+          Historial
+        </span>
         <paper-icon-button on-click="_handleRestartHistory" icon="icons:autorenew"></paper-icon-button>
       </h3>
-      <dom-repeat items="{{history}}">
-        <template>
-          <p>
-            <strong>{{index}}.</strong> Movimiento: {{item}} 
-            <button on-click="_handleHistory" data-index$="{{index}}" disabled$="{{!finished}}">
-              Ver
-            </button>
-          </p>
-        </template>
-      </dom-repeat>
+      <div id="container">
+        <dom-repeat items="{{history}}">
+          <template>
+            <p>
+              <strong>{{index}}.</strong> Movimiento: {{item}} 
+              <button on-click="_handleHistory" data-index$="{{index}}" disabled$="{{!finished}}">
+                Ver
+              </button>
+            </p>
+          </template>
+        </dom-repeat>
+      </div>
     </div>
   </template>
 
   <script>
-    class ComputerPlay extends Polymer.Element {
+    class ComputerPlay extends Hiden(Polymer.Element) {
       static get is() { return 'computer-play'; }
       static get properties() {
         return {
@@ -162,7 +178,6 @@
       }
 
       _historyChanges() {
-        console.log(this.finished, new Date().getSeconds());
         if (this.history.length === 9 && !this.finished) {
           this.$.modalask.open();
         }
@@ -197,7 +212,6 @@
           if (this._getGameResult()) {
             this.finished = true;
             this._addClassToWinnerRoute();
-            console.log(this.finished);
             this.$.modal.open();
           }
           

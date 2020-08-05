@@ -1,0 +1,35 @@
+<script>
+  const Hiden = (superClass) => class extends superClass {
+
+    static get properties() {
+      return {
+        hidden: {
+          type: Boolean,
+          value: false
+        }
+      }
+    }
+
+    isHidden() {
+      return this.hidden;
+    }
+
+    hide() {
+      this.hidden = true;
+      this.$.container.style.display = 'none';
+    }
+
+    show() {
+      this.hidden = false;
+      this.$.container.style.display = 'block';
+    }
+
+    toggle() {
+      if (!this.isHidden()) {
+        this.hide();
+      } else {
+        this.show();
+      }
+    }
+  }
+</script>

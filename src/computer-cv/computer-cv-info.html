@@ -1,0 +1,65 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../mixin/Hiden.html">
+
+<dom-module id="computer-cv-info">
+  <template>
+    <style>
+      section {
+        display: block;
+        margin: 20px;
+      }
+      paper-card {
+        --paper-card: {
+          width: 100%;
+        };
+        --paper-card-header: {
+          background-color: var(--computer-cv-info-header-background-color, #b3c7ff);
+        };
+        --paper-card-header-color: var(--computer-cv-info-header-color, #fff);
+      }
+      .card-actions {
+        padding: 0;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .card-actions paper-icon-button {
+        height: 36px;
+        width: 36px;
+      }
+    </style>
+    <section>
+      <paper-card heading="{{header}}">
+        <div class="card-content" id="container">
+          <slot></slot>
+        </div>
+        <div class="card-actions" on-click="toggle">
+          <dom-if if="{{!hidden}}">
+            <template>
+              <paper-icon-button icon="expand-less"></paper-icon-button>
+            </template>
+          </dom-if>
+          <dom-if if="{{hidden}}">
+            <template>
+              <paper-icon-button icon="expand-more"></paper-icon-button>
+            </template>
+          </dom-if>
+        </div>      
+      </paper-card>
+    </section>
+  </template>
+
+  <script>
+    class ComputerCVInfo extends Hiden(Polymer.Element) {
+      static get is() { return 'computer-cv-info'; }
+      static get properties() {
+        return {
+          header: String
+        };
+      }
+    }
+    window.customElements.define(ComputerCVInfo.is, ComputerCVInfo);
+  </script>
+</dom-module>
